@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { z } from 'zod';
+import { unknown, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
 import Link from 'next/link';
+import { createAccount } from '@/lib/actions/user.actions';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -26,26 +27,47 @@ const formSchema = z.object({
 const authFormSchema = (formType: FormType) => {
     return z.object({
         email: z.string().email(),
-        fullName: formType === 'sign-up' ? z.string().min(3).max(50): z.null(),
+        fullname: formType === 'sign-up' ? z.string().min(3).max(50): z.null(),
     })
 }
 
 const AuthForm = ({ type }: { type: FormType }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [accountId, setAccountId] = useState(unknown);
     
     const formSchema = authFormSchema(type);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            fullName: "", email: "",
+            fullname: "", email: "",
         },
     })
 
 
     // 2. Define a submit handler.
-    const onSubmit = async(values: z.infer<typeof formSchema>) => {
-        console.log(values)
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        // console.log(values)
+        setIsLoading(true);
+        setErrorMessage("");
+
+        try {
+            const user = await createAccount({
+                fullname: values.fullname || "",
+                email: values.email
+            });
+
+            console.log(user);
+    
+            setAccountId(user.accountId);
+
+        } catch (error) {
+            console.log(error);
+            setErrorMessage('Failed to create an account. Please try again later')
+        } finally {
+            setIsLoading(false);
+        }
+        
     }
     return (
         <>        
@@ -58,7 +80,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 {   type === 'sign-up' &&
                     <FormField
                     control={form.control}
-                    name="fullName"
+                    name="fullname"
                     render={({ field }) => (
                         <FormItem>
                             <div className="shad-form-item">
