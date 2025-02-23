@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import Image from 'next/image';
 import Link from 'next/link';
 import { createAccount } from '@/lib/actions/user.actions';
+import OTPModal from './OTPModal';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -34,7 +35,7 @@ const authFormSchema = (formType: FormType) => {
 const AuthForm = ({ type }: { type: FormType }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [accountId, setAccountId] = useState(unknown);
+    const [accountId, setAccountId] = useState(undefined);
     
     const formSchema = authFormSchema(type);
     const form = useForm<z.infer<typeof formSchema>>({
@@ -57,7 +58,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 email: values.email
             });
 
-            console.log(user);
+            console.log("This is User: " + user.accountId);
     
             setAccountId(user.accountId);
 
@@ -135,7 +136,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </form>
         </Form>
         {/* OTP VERIFICATION */}
-        </>
+        {accountId && 
+        <OTPModal email={form.getValues('email')} accountId={accountId}/>}
+        </> 
     )
 }
 

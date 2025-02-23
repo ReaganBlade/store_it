@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["plus.unsplash.com"], // For external images
     unoptimized: true, // Serve images as is (useful for local SVGs)
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: "cdn.pixabay.com"
+      },
+      {
+        protocol: 'https',
+        hostname: "cloud.appwrite.io"
+      }
+    ]
   },
   webpack(config) {
     config.module.rules.push({
