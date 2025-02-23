@@ -16,14 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
 import Link from 'next/link';
-import { createAccount } from '@/lib/actions/user.actions';
+import { createAccount, signInUser } from '@/lib/actions/user.actions';
 import OTPModal from './OTPModal';
 
 type FormType = 'sign-in' | 'sign-up';
-
-const formSchema = z.object({
-    username: z.string().min(2).max(30),
-})
 
 const authFormSchema = (formType: FormType) => {
     return z.object({
@@ -45,7 +41,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
         },
     })
 
-
     // 2. Define a submit handler.
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         // console.log(values)
@@ -53,13 +48,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
         setErrorMessage("");
 
         try {
-            const user = await createAccount({
+            const user = 
+                type === 'sign-up' ? await createAccount({
                 fullname: values.fullname || "",
-                email: values.email
-            });
+                email: values.email 
+            }) : await signInUser({email: values.email});
 
             console.log("This is User: " + user.accountId);
     
+            // setAccountId(user.accountId);
             setAccountId(user.accountId);
 
         } catch (error) {
@@ -67,9 +64,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
             setErrorMessage('Failed to create an account. Please try again later')
         } finally {
             setIsLoading(false);
-        }
-        
-    }
+        }    
+    };
+
     return (
         <>        
         <Form {...form}>
@@ -87,7 +84,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                             <div className="shad-form-item">
                                 <FormLabel className='shad-form-label'>Full Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="shadcn" {...field} className='shad-input' />
+                                    <Input placeholder="Full Name" {...field} className='shad-input' />
                                 </FormControl>
                             </div>
                             <FormMessage className='shad-form-message' />
@@ -101,9 +98,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
                     render={({ field }) => (
                         <FormItem>
                             <div className="shad-form-item">
-                                <FormLabel className='shad-form-label'>Email    </FormLabel>
+                                <FormLabel className='shad-form-label'>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="shadcn" {...field} className='shad-input' />
+                                    <Input placeholder="Email" {...field} className='shad-input' />
                                 </FormControl>
                             </div>
                             <FormMessage className='shad-form-message' />
@@ -111,7 +108,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
                     )}
                 />
                 <Button type="submit" className='form-submit-button' disabled={isLoading}>
-                    
                     {type=== "sign-in" ? "Sign In": "Sign Up"}
 
                     {isLoading &&
