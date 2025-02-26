@@ -1,25 +1,25 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["plus.unsplash.com"], // For external images
+    domains: ['plus.unsplash.com'], // For external images
     unoptimized: true, // Serve images as is (useful for local SVGs)
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: "cdn.pixabay.com"
+        hostname: 'cdn.pixabay.com',
       },
       {
         protocol: 'https',
-        hostname: "cloud.appwrite.io"
-      }
-    ]
+        hostname: 'cloud.appwrite.io',
+      },
+    ],
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"], // Allows importing SVGs as React components
+      use: ['@svgr/webpack'], // Allows importing SVGs as React components
     });
     return config;
   },
@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
-  }
+  },
 };
 
 export default nextConfig;
