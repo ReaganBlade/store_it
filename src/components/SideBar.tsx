@@ -6,13 +6,13 @@ import { usePathname } from 'next/navigation';
 import { avatarPlaceholderUrl, navItems } from '@/constants';
 import { cn } from '@/lib/utils';
 
-interface Props{
+interface Props {
   fullname: string;
   avatar: string;
   email: string;
 }
 
-const SideBar = ({fullname, avatar, email}: Props) => {
+const SideBar = ({ fullname, avatar, email }: Props) => {
   const pathname = usePathname();
   return (
     <aside className='sidebar'>
@@ -46,7 +46,7 @@ const SideBar = ({fullname, avatar, email}: Props) => {
                   alt={name}
                   width={24}
                   height={24}
-                  className={cn('nav-icon', pathname=== url && 'nav-icon-active')}
+                  className={cn('nav-icon', pathname === url && 'nav-icon-active')}
                 />
                 <p className='hidden lg:block'>
                   {name}
@@ -59,20 +59,20 @@ const SideBar = ({fullname, avatar, email}: Props) => {
         </ul>
       </nav>
 
-      <Image 
-      src='/assets/images/files-2.png'
-      alt='logo'
-      width={506}
-      height={418}
-      className='w-full'
+      <Image
+        src='/assets/images/files-2.png'
+        alt='logo'
+        width={506}
+        height={418}
+        className='w-full'
       />
       <div className="sidebar-user-info">
-        <Image 
-        src={avatarPlaceholderUrl}
-        alt='avatar'
-        width={44}
-        height={44}
-        className='sidebar-user-avatar'
+        <Image
+          src={avatarPlaceholderUrl}
+          alt='avatar'
+          width={44}
+          height={44}
+          className='sidebar-user-avatar'
         />
         <div className='hidden lg:block'>
           <p className='subtitle-2 capitalize'>
