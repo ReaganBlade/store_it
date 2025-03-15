@@ -4,10 +4,30 @@ import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 
 /** @type {import('eslint').Linter.Config[]} */
-export default [
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { globals: globals.browser } },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-];
+// export default [
+//   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
+//   { languageOptions: { globals: globals.browser } },
+//   pluginJs.configs.recommended,
+//   ...tseslint.configs.recommended,
+//   pluginReact.configs.flat.recommended,
+// ];
+
+import { FlatCompat } from '@eslint/eslintrc'
+
+const compat = new FlatCompat({
+  // import.meta.dirname is available after Node.js v20.11.0
+  baseDirectory: import.meta.dirname,
+})
+
+const eslintConfig = [
+  ...compat.config({
+    extends: ['next'],
+    rules: {
+      'react/no-unescaped-entities': 'off',
+      '@next/next/no-page-custom-font': 'off',
+      '@next/next/no-undef': 'on'
+    },
+  }),
+]
+
+export default eslintConfig

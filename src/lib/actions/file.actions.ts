@@ -3,9 +3,12 @@ import { uploadFileProps } from '@/types';
 import { createAdminClient } from '../appwrite';
 import { InputFile } from 'node-appwrite/file';
 import { appwriteConfig } from '../appwrite/config';
-import { ID } from 'node-appwrite';
+import { ID, Models, Query } from 'node-appwrite';
 import { constructDownloadUrl, constructFileUrl, getFileType, parseStringify } from '../utils';
 import { revalidatePath } from 'next/cache';
+import { getCurrentUser } from './user.actions';
+import { parse } from 'path';
+import { exec } from 'child_process';
 // import { handleError } from "./user.actions";
 
 const handleError = (error: unknown, message: string) => {
@@ -13,13 +16,31 @@ const handleError = (error: unknown, message: string) => {
   throw error;
 };
 
-export const uploadFile = async ({ file, ownerId, accountId, path }: uploadFileProps) => {
+const createQueries = (currentUser: Models.Document) => {
+  const queries = [
+    Query.or([Query.equal('owner', [currentUser.$id]), Query.contains('users', [currentUser.email])]),
+  ];
+  // TODO: Search, Sort, limits...
+
+  return queries;
+};
+
+export const uploadFile = async ({
+  file,
+  ownerId,
+  accountId,
+  path,
+}: UploadFileProps) => {
   const { storage, databases } = await createAdminClient();
 
   try {
     const inputFile = InputFile.fromBuffer(file, file.name);
 
-    const bucketFile = await storage.createFile(appwriteConfig.bucketId, ID.unique(), inputFile);
+    const bucketFile = await storage.createFile(
+      appwriteConfig.bucketId,
+      ID.unique(),
+      inputFile,
+    );
 
     const fileDocument = {
       type: getFileType(bucketFile.name).type,
@@ -33,22 +54,97 @@ export const uploadFile = async ({ file, ownerId, accountId, path }: uploadFileP
       bucketFileId: bucketFile.$id,
     };
 
+    console.log("File URL: " + fileDocument.url);
+
     const newFile = await databases
       .createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.filesCollectionId,
         ID.unique(),
-        fileDocument
+        fileDocument,
       )
       .catch(async (error: unknown) => {
         await storage.deleteFile(appwriteConfig.bucketId, bucketFile.$id);
-        handleError(error, 'Failed to upload the file');
+        handleError(error, "Failed to create file document");
       });
 
     revalidatePath(path);
-
     return parseStringify(newFile);
   } catch (error) {
-    handleError(error, 'Failed to Upload the file');
+    handleError(error, "Failed to upload file");
+  }
+};
+
+export const getFiles = async () => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) throw new Error('User not found');
+
+    const queries = createQueries(currentUser);
+
+    console.log({currentUser, queries});
+
+    const files = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      queries,
+    );
+
+    console.log({ files });
+
+    return parseStringify(files);
+
+
+  } catch (error) {
+    handleError(error, 'Failed to get files');
+  }
+};
+
+
+export const renameFile = async ({fileId, name, extension, path}: RenameFileProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const newName = `${name}.${extension}`;
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        name: newName
+      }
+    );
+
+    revalidatePath(path);
+
+    return parseStringify(updatedFile);
+
+  } catch (e) {
+    handleError(e, "Failed to rename file.")
+  }
+};
+
+export const updateFileUsers = async ({fileId, emails, path}: UpdateFileUsersProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        users: emails
+      }
+    );
+
+    revalidatePath(path);
+
+    return parseStringify(updatedFile);
+
+  } catch (e) {
+    handleError(e, "Failed to Share the File.")
   }
 };

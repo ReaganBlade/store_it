@@ -12,8 +12,10 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   if (!currentUser) return redirect("/sign-in");
   return (
     <main className="flex h-screen">
+      {/* Side bar Component */}
       <SideBar {...currentUser} />
 
+      {/* Main Section */}
       <section className="flex h-full flex-1 flex-col">
         <MobileNavigation {...currentUser} />
         <Header userId={currentUser.$id} accountId={currentUser.accountId} />

@@ -5,7 +5,6 @@ import { appwriteConfig } from '../appwrite/config';
 import { Query, ID } from 'node-appwrite';
 import { parseStringify } from '../utils';
 import { cookies } from 'next/headers';
-import { parse } from 'path';
 import { redirect } from 'next/navigation';
 
 const getUserByEmail = async (email: string) => {
@@ -138,6 +137,7 @@ export const signInUser = async ({ email }: { email: any }) => {
     const existingUser = await getUserByEmail(email);
 
     console.log('existing user: ' + existingUser);
+    // if (existingUser === null) throw new Error("User Doesn't Exist");
 
     if (existingUser) {
       await sendEmailOTP({ email });
@@ -148,6 +148,7 @@ export const signInUser = async ({ email }: { email: any }) => {
 
     return parseStringify({ accountId: null, error: 'User not Found!' });
   } catch (error) {
+    console.log(error)
     handleError(error, 'Failed to sign-in user.');
   }
 };
