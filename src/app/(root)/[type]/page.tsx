@@ -4,10 +4,14 @@ import { getFiles } from '@/lib/actions/file.actions';
 import { Models } from 'node-appwrite';
 import React from 'react';
 
-const page = async ({ params }: SearchParamProps) => {
+const page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || '';
+  const searchText = ((await searchParams)?.query as string) || '';
+  const sort = ((await searchParams)?.query as string) || '';
 
-  const files = await getFiles();
+  const types = getFileTypeParams(type) as FileType[];
+
+  const files = await getFiles({ types, searchText, sort });
   // console.log(files);
 
   return (
@@ -40,3 +44,19 @@ const page = async ({ params }: SearchParamProps) => {
 };
 
 export default page;
+
+function getFileTypeParams(type: string): FileType[] {
+  switch (type){
+    case "documents":
+      return ["document"];
+    case "images":
+      return ["image"];
+    case "media":
+      return ["video", "audio"];
+    case "others":
+      return ["other"];
+    default:
+      return ["document"];
+  }
+}
+
