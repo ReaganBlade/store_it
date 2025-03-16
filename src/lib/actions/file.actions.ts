@@ -1,15 +1,21 @@
 'use server';
-import { uploadFileProps } from '@/types';
+
+// import { UploadFileProps } from '@/types';
 import { createAdminClient } from '../appwrite';
 import { InputFile } from 'node-appwrite/file';
 import { appwriteConfig } from '../appwrite/config';
 import { ID, Models, Query } from 'node-appwrite';
-import { constructDownloadUrl, constructFileUrl, getFileType, parseStringify } from '../utils';
+import { constructFileUrl, getFileType, parseStringify } from '../utils';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from './user.actions';
-import { parse } from 'path';
-import { exec } from 'child_process';
 // import { handleError } from "./user.actions";
+
+interface UploadFileProps {
+  file: File;
+  ownerId: string;
+  accountId: string;
+  path: string;
+}
 
 const handleError = (error: unknown, message: string) => {
   // console.log(error, message);
