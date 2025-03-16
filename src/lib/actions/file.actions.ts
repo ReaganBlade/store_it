@@ -12,7 +12,7 @@ import { exec } from 'child_process';
 // import { handleError } from "./user.actions";
 
 const handleError = (error: unknown, message: string) => {
-  console.log(error, message);
+  // console.log(error, message);
   throw error;
 };
 
@@ -40,7 +40,7 @@ const createQueries = (
     queries.push(orderBy === 'asc' ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy));
   }
 
-  console.log(queries);
+  // console.log(queries);
 
   return queries;
 };
@@ -65,7 +65,7 @@ export const uploadFile = async ({ file, ownerId, accountId, path }: UploadFileP
       bucketFileId: bucketFile.$id,
     };
 
-    console.log('File URL: ' + fileDocument.url);
+    // console.log('File URL: ' + fileDocument.url);
 
     const newFile = await databases
       .createDocument(
@@ -101,7 +101,7 @@ export const getFiles = async ({
 
     const queries = createQueries(currentUser, types, searchText, sort, limit);
 
-    console.log({ currentUser, queries });
+    // console.log({ currentUser, queries });
 
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -109,7 +109,7 @@ export const getFiles = async ({
       queries
     );
 
-    console.log({ files });
+    // console.log({ files });
 
     return parseStringify(files);
   } catch (error) {

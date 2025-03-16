@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Models } from 'node-appwrite';
 import { getFiles } from '@/lib/actions/file.actions';
-import Thumbnail from './thumbnail';
+import Thumbnail from './Thumbnail';
 import FormattedDateTime from './FormattedDateTime';
 import { useRouter } from 'next/navigation';
 import {useDebounce} from 'use-debounce';

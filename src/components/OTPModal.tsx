@@ -41,7 +41,8 @@ const OTPModal = ({ accountId, email }: { accountId: string; email: string }) =>
             if (sessionId) router.push('/');
 
         } catch (error) {
-            console.log("Failed to Verify OTP");
+            // console.log("Failed to Verify OTP");
+            setErrorMessage('Failed to verify OTP. Please try again later');
         }
         setIsLoading(false);
     };
@@ -97,3 +98,7 @@ const OTPModal = ({ accountId, email }: { accountId: string; email: string }) =>
 }
 
 export default OTPModal
+function setErrorMessage(arg0: string) {
+    throw new Error('Function not implemented.');
+}
+

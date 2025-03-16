@@ -1,6 +1,6 @@
 import { Models } from 'node-appwrite';
 import React from 'react';
-import Thumbnail from './thumbnail';
+import Thumbnail from './Thumbnail';
 import { convertFileSize } from '@/lib/utils';
 import FormattedDateTime from './FormattedDateTime';
 import Link from 'next/link';

@@ -20,7 +20,7 @@ const getUserByEmail = async (email: string) => {
 };
 
 const handleError = (error: unknown, message: string) => {
-  console.log(error, message);
+  // console.log(error, message);
   throw error;
 };
 
@@ -29,7 +29,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
   try {
     const session = await account.createEmailToken(ID.unique(), email);
-    console.log(session);
+    // console.log(session);
 
     return session.userId;
   } catch (error) {
@@ -50,8 +50,8 @@ export const createAccount = async ({ fullname, email }: { fullname: string; ema
 
   if (!existingUser) {
     const { databases } = await createAdminClient();
-    console.log('Database Check!!!');
-    console.log(databases);
+    // console.log('Database Check!!!');
+    // console.log(databases);
 
     await databases.createDocument(
       appwriteConfig.databaseId,
@@ -136,7 +136,7 @@ export const signInUser = async ({ email }: { email: any }) => {
   try {
     const existingUser = await getUserByEmail(email);
 
-    console.log('existing user: ' + existingUser);
+    // console.log('existing user: ' + existingUser);
     // if (existingUser === null) throw new Error("User Doesn't Exist");
 
     if (existingUser) {
@@ -148,7 +148,7 @@ export const signInUser = async ({ email }: { email: any }) => {
 
     return parseStringify({ accountId: null, error: 'User not Found!' });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     handleError(error, 'Failed to sign-in user.');
   }
 };

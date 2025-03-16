@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from './ui/button';
 import { cn, convertFileToUrl, getFileType } from '@/lib/utils';
 import Image from 'next/image';
-import Thumbnail from './thumbnail';
+import Thumbnail from './Thumbnail';
 import { MAX_FILE_SIZE } from '@/constants';
 import { toast } from "sonner"
 import { usePathname } from 'next/navigation';
